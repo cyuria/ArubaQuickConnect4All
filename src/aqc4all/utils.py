@@ -35,6 +35,7 @@ def detect_network_stack():
         "systemd-networkd": os.path.exists("/etc/systemd/network"),
         "connman": shutil.which("connmanctl"),
         "wicked": shutil.which("wicked"),
+        "iwd": shutil.which("iwctl"),
     }
     return {k: bool(v) for k, v in tools.items()}
 
@@ -189,6 +190,8 @@ def do_install(k, extracted_data, sdbinary):
         install_connman_config(extracted_data, sdbinary)
     elif k == "wicked":
         install_wicked_config(extracted_data, sdbinary)
+    elif k == "iwd":
+        install_iwd_config(extracted_data, sdbinary)
     else:
         print("[!] No supported network stack detected. You must be a hardcore Linux chad who runs LFS.  Mad respect...")
 
@@ -309,6 +312,19 @@ def install_wicked_config(extracted_data, sdbinary):
         print(f"[✓] Wicked config installed to {config_path}")
     except Exception as e:
         print(f"[!] Failed to install Wicked config: {e}")
+
+def install_iwd_config(extracted_data, sdbinary):
+    ssid =  extracted_data['ssid']
+    config_path = os.path.expanduser(f"~/{ssid}-files")
+    config_file = f"{ssid}.8021x"
+    reload_command = "systemctl restart iwd"
+    install_path = f"/var/lib/iwd/{ssid}.8021x"
+    extra_dirs = None
+    try:
+        install_certs_and_keys(extracted_data, config_file, install_path, extra_dirs, reload_command, sdbinary, False)
+        print(f"[✓] IWD config installed to {config_path}")
+    except Exception as e:
+        print(f"[!] Failed to install IWD config: {e}")
 
 def cleanup_tmp(args):
     if not args.noclean:

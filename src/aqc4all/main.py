@@ -26,7 +26,7 @@ def parse_args():
             - Purge that Aruba filth from your glorious *-nix machine
 
         Supports:
-        NetworkManager, wpa_supplicant, systemd-networkd, netifrc, connman, wicked, netctl
+        NetworkManager, wpa_supplicant, systemd-networkd, netifrc, connman, wicked, netctl, iwd
 
         This script SHOULD work on all POSIX-compliant OSes, but has only been tested on Linux.
         BSD Chads, you deserve some love too :-)
@@ -239,6 +239,7 @@ def main():
     network.generate_netctl_config(created_configs, extracted_data)
     network.generate_connman_settings(created_configs, extracted_data)
     network.generate_wicked_config(created_configs, extracted_data)
+    network.generate_iwd_settings(created_configs, extracted_data)
 
     utils.persist_files(created_configs, extracted_data)
     utils.prompt_to_install(args, extracted_data)

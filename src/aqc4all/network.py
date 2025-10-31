@@ -255,3 +255,18 @@ def generate_wicked_config(created_configs, extracted_data, cert_path="/tmp/aqc/
     print(f"[✓] wicked config written to {wicked_path}")
     created_configs.append(f"{wicked_path}")
 
+def generate_iwd_settings(created_configs, extracted_data, cert_path="/tmp/aqc/client.pem", key_path="/tmp/aqc/private_key.pem"):
+    iwd_path = f"/tmp/aqc/{extracted_data['ssid']}.8021x"
+    with open(iwd_path, "w") as f:
+        f.write("""[Security]
+EAP-Method=TLS
+EAP-TLS-CACert={extracted_data['root_cert']}
+EAP-Identity={extracted_data['username']}
+EAP-TLS-ClientCert={extracted_data['client_cert']}
+EAP-TLS-ClientKey={extracted_data['priv_key']}
+
+[Settings]
+AutoConnect=true
+""")
+    print(f"[✓] iwd config written to {iwd_path}")
+    created_configs.append(f"{iwd_path}")
